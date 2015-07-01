@@ -3,7 +3,7 @@
 //var myDataRef = new Firebase('https://s60xwqpzd92.firebaseio-demo.com/');
 
 var taskInput = document.getElementById("new-task"); //new-task
-var addButton = document.getElementsByTagName("button")[0]; //first button
+var addButton = document.getElementsByTagName("button")[1]; //first button
 var incompleteTasksHolder = document.getElementById("incomplete-tasks"); //incomplete-tasks
 var completedTasksHolder = document.getElementById("completed-tasks"); //completed-tasks
 var username = document.getElementById("input-email"); //input-email

@@ -16,6 +16,10 @@ h1 {
   margin: 50px auto 0;
 }
 
+.container {
+  margin-bottom: 60px;
+}
+
 .login-screen {
   margin-top:100px;
   font-size: 36px;
@@ -44,15 +48,19 @@ h1 {
   border-style: solid;
 }
 
-.edit, .delete, .add {
-  background: none;
+li button, .add {
+ background: none;
   border-style: none;
   font-size: 14px;
   width: 50px;
-  margin: 10px 0 0;
   font-family: roboto, sans-serif;
   cursor: pointer;
+  height: 15px;
+  display: inline-block;
+}
 
+.add {
+  margin-top: 4px;
 }
 
 
@@ -124,3 +132,4 @@ ul li.editMode input[type = "text"] {
 ul li.editMode label {
   display: none;
 }
+
