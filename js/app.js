@@ -1,7 +1,7 @@
 //Problem: User interaction doesn't provide desired results.
 //Solution: Add interactivty so the user can manage daily tasks.
-//var myDataRef = new Firebase('https://s60xwqpzd92.firebaseio-demo.com/');
 $('.container').hide(); 
+var fb = new Firebase('https://test-1-sely.firebaseio.com/');
 var taskInput = document.getElementById("new-task"); //new-task
 var addButton = document.getElementsByTagName("button")[1]; //first button
 var incompleteTasksHolder = document.getElementById("incomplete-tasks"); //incomplete-tasks
@@ -12,19 +12,18 @@ var loginButton = document.getElementById("sign-in-button"); //sign in button
 
 //New Task List Item
 var createNewTaskElement = function(taskString) {
-  //Create List Item
-  var listItem = document.createElement("li");
-
-  //input (checkbox)
-  var checkBox = document.createElement("input"); // checkbox
-  //label
-  var label = document.createElement("label");
-  //input (text)
-  var editInput = document.createElement("input"); // text
-  //button.edit
-  var editButton = document.createElement("button");
-  //button.delete
-  var deleteButton = document.createElement("button");
+//Create List Item
+var listItem = document.createElement("li");
+//input (checkbox)
+var checkBox = document.createElement("input"); // checkbox
+//label
+var label = document.createElement("label");
+//input (text)
+var editInput = document.createElement("input"); // text
+//button.edit
+var editButton = document.createElement("button");
+//button.delete
+var deleteButton = document.createElement("button");
 
   
   //Each element needs modifying
@@ -49,33 +48,28 @@ var createNewTaskElement = function(taskString) {
   return listItem;
 }
 
-var login = function(username, password) {
-	//checks firebase database for username and sees if it's there
-		//if username is there, check password
-			//if password is incorrect then popup message "password is incorrect"
-		//if username is wrong, pop up message "username/password is not correct"
-	if (username == FIREBASE_USERNAME && password == FIREBASE_PASSWORD) {
-		//if password is correct then go to second screen with task list
-
-	}
-}
-
 var signIn = function() {
   console.log("signing in...");
   $('.login-screen').hide();
   $('.container').show();
 }
 
+
 //Add a new task
 var addTask = function() {
   console.log("Add task...");
   //Create a new list item with the text from #new-task:
   var listItem = createNewTaskElement(taskInput.value);
+
   //Append listItem to incompleteTasksHolder
   incompleteTasksHolder.appendChild(listItem);
   bindTaskEvents(listItem, taskCompleted);
-  
-  taskInput.value = "";
+
+  //push task to firebase
+  //taskInput.value = "";
+  fb.push({item: taskInput.value});
+
+  listItem = '';
 }
 
 //Edit an existing task
@@ -113,6 +107,8 @@ var deleteTask = function() {
   
   //Remove the parent list item from the ul
   ul.removeChild(listItem);
+
+  //delete from firebase
 }
 
 //Mark a task as complete
