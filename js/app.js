@@ -1,14 +1,14 @@
 //Problem: User interaction doesn't provide desired results.
 //Solution: Add interactivty so the user can manage daily tasks.
 //var myDataRef = new Firebase('https://s60xwqpzd92.firebaseio-demo.com/');
-
+$('.container').hide(); 
 var taskInput = document.getElementById("new-task"); //new-task
 var addButton = document.getElementsByTagName("button")[1]; //first button
 var incompleteTasksHolder = document.getElementById("incomplete-tasks"); //incomplete-tasks
 var completedTasksHolder = document.getElementById("completed-tasks"); //completed-tasks
 var username = document.getElementById("input-email"); //input-email
 var password = document.getElementById("input-password"); //input-password
-
+var loginButton = document.getElementById("sign-in-button"); //sign in button
 
 //New Task List Item
 var createNewTaskElement = function(taskString) {
@@ -58,6 +58,12 @@ var login = function(username, password) {
 		//if password is correct then go to second screen with task list
 
 	}
+}
+
+var signIn = function() {
+  console.log("signing in...");
+  $('.login-screen').hide();
+  $('.container').show();
 }
 
 //Add a new task
@@ -142,6 +148,9 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
   
   //bind checkBoxEventHandler to checkbox
   checkBox.onchange = checkBoxEventHandler;
+
+  //bind login button to signIn
+  loginButton.onclick = signIn;
 }
 
 var ajaxRequest = function() {
