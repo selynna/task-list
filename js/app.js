@@ -2,6 +2,7 @@
 //Solution: Add interactivty so the user can manage daily tasks.
 $('.container').hide(); 
 $('.error-message').hide();
+$('.successful-account-message').hide();
 var fb = new Firebase('https://test-1-sely.firebaseio.com/');
 var taskInput = document.getElementById("new-task"); //new-task
 var addButton = document.getElementsByTagName("button")[3]; //4th button...
@@ -60,9 +61,11 @@ var createUserAcc = function() {
       console.log("Error creating user:", error);
     } else {
       console.log("Successfully created user account with uid:", userData.uid);
+      $('.successful-account-message').show();
     }
   });
 }
+
 var signIn = function() {
   console.log("signing in...");
   fb.authWithPassword({
