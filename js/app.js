@@ -3,6 +3,7 @@
 $('.container').hide(); 
 $('.error-message').hide();
 $('.successful-account-message').hide();
+$('.error-create-account').hide();
 var fb = new Firebase('https://test-1-sely.firebaseio.com/');
 var taskInput = document.getElementById("new-task"); //new-task
 var addButton = document.getElementsByTagName("button")[3]; //4th button...
@@ -59,6 +60,8 @@ var createUserAcc = function() {
   }, function(error, userData) {
     if (error) {
       console.log("Error creating user:", error);
+      $('.error-create-account').show();
+
     } else {
       console.log("Successfully created user account with uid:", userData.uid);
       $('.successful-account-message').show();
