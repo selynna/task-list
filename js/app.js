@@ -67,7 +67,13 @@ var addTask = function() {
 
   //push task to firebase
   //taskInput.value = "";
+  // debugger
+  // var callback = function(something) {
+  //   debugger
+  // }
+  // var asdf = 
   fb.push({item: taskInput.value});
+  
 
   listItem = '';
 }
@@ -104,12 +110,67 @@ var deleteTask = function() {
   console.log("Delete task...");
   var listItem = this.parentNode;
   var ul = listItem.parentNode;
-  
-  //Remove the parent list item from the ul
-  ul.removeChild(listItem);
-
+ 
+ 
   //delete from firebase
+  fb.once('value', function(snapshot) {
+    //gets children, which is all of the data in the firebase
+    //Object {key: fjdlkjga, key: fjalkega, etc}
+    var children = snapshot.val();
+    console.log(children);
+
+
+    //loop to go through all the children/all the keys
+    for (var child_id in children) {
+
+      //returns a string form of the key
+      var child = fb.child(child_id);
+      console.log(child);
+
+      //returns a firebase url to key: test-1-sely.firebaseio.com/KEY_VALUE
+      var childPath = child.toString();
+
+      //creates a new firebase database thing at the url above
+      var childPathString = new Firebase(childPath);
+
+      //gets the key object (not the string version)
+      var childRef = children[child_id];
+      console.log(childRef);
+
+      //gets the value of the item in the key {key -> item: "value"}
+      var item = childRef["item"];
+      console.log(item);
+
+      //compare it with the label of the actual task
+      if (listItem.getElementsByTagName("label")[0].innerHTML == item) {
+        //removes the thing from firebase
+        childPathString.remove();
+        //removes task from the html
+        ul.removeChild(listItem);
+        break;
+      }
+
+  }
+
+  // fb.once('value', function(snapshot) {
+  //   snapshot.forEach(function(dataSnap) {
+  //     var item = dataSnap.child('item').item;
+  //     console.log(item);
+  //   });
+  // });
+
+
+  //Remove the parent list item from the ul
+
+    //.key()
+    
+    //console.log(child.key());
+   // child.remove();
+  });
+
+
 }
+
 
 //Mark a task as complete
 var taskCompleted = function() {
