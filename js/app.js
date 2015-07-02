@@ -1,14 +1,16 @@
 //Problem: User interaction doesn't provide desired results.
 //Solution: Add interactivty so the user can manage daily tasks.
 $('.container').hide(); 
+$('.error-message').hide();
 var fb = new Firebase('https://test-1-sely.firebaseio.com/');
 var taskInput = document.getElementById("new-task"); //new-task
-var addButton = document.getElementsByTagName("button")[1]; //first button
+var addButton = document.getElementsByTagName("button")[3]; //4th button...
 var incompleteTasksHolder = document.getElementById("incomplete-tasks"); //incomplete-tasks
 var completedTasksHolder = document.getElementById("completed-tasks"); //completed-tasks
 var username = document.getElementById("input-email"); //input-email
 var password = document.getElementById("input-password"); //input-password
 var loginButton = document.getElementById("sign-in-button"); //sign in button
+var createAccountButton = document.getElementsByTagName("button")[2]; //3rd button
 
 //New Task List Item
 var createNewTaskElement = function(taskString) {
@@ -48,10 +50,37 @@ var deleteButton = document.createElement("button");
   return listItem;
 }
 
+var createUserAcc = function() {
+  console.log("creating user acc");
+  fb.createUser({
+    email    : document.getElementById("input-email").value,
+    password : document.getElementById("input-password").value
+  }, function(error, userData) {
+    if (error) {
+      console.log("Error creating user:", error);
+    } else {
+      console.log("Successfully created user account with uid:", userData.uid);
+    }
+  });
+}
 var signIn = function() {
   console.log("signing in...");
-  $('.login-screen').hide();
-  $('.container').show();
+  fb.authWithPassword({
+    email    : document.getElementById("input-email").value,
+    password : document.getElementById("input-password").value
+}, function(error, authData) {
+  if (error) {
+    console.log("Login Failed!", error);
+    $('.error-message').show();  
+  } else {
+    console.log("Authenticated successfully with payload:", authData);
+    $('.login-screen').hide();
+    $('.container').show();
+    $('.error-message').hide();
+
+  }
+});
+
 }
 
 
@@ -88,6 +117,7 @@ var editTask = function() {
   var label = listItem.querySelector("label");
   
   var containsClass = listItem.classList.contains("editMode");
+
   
   //if the class of the parent is .editMode
   if(containsClass) {
@@ -97,12 +127,54 @@ var editTask = function() {
   } else {
     //Switch to .editMode
     //input value becomes the label's text
-    editInput.value = label.innerText;
+    var originalLabel = label.innerText;
+    
+
+    //copypastethingylol
+  fb.once('value', function(snapshot) {
+    //gets children, which is all of the data in the firebase
+    //Object {key: fjdlkjga, key: fjalkega, etc}
+    var children = snapshot.val();
+    console.log(children);
+
+
+    //loop to go through all the children/all the keys
+    for (var child_id in children) {
+
+      //returns a string form of the key
+      var child = fb.child(child_id);
+      console.log(child);
+
+      //returns a firebase url to key: test-1-sely.firebaseio.com/KEY_VALUE
+      var childPath = child.toString();
+
+      //creates a new firebase database thing at the url above
+      var childPathString = new Firebase(childPath);
+
+      //gets the key object (not the string version)
+      var childRef = children[child_id];
+      console.log(childRef);
+
+      //gets the value of the item in the key {key -> item: "value"}
+      var item = childRef["item"];
+      console.log(item);
+      if (listItem.getElementsByTagName("label")[0].innerHTML == originalLabel) {
+        editInput.value = label.innerText;
+    var input = editInput.value;
+    console.log(input);
+      item = input;
+      console.log(item);
+      }
+    }
+  });
+
   }
   
   //Toggle .editMode on the list item
   listItem.classList.toggle("editMode");
-  
+
+  console.log(editInput.value);
+  //listItem.getElementsByTagName("label")[0].innerHTML
 }
 
 //Delete an existing task
@@ -151,21 +223,6 @@ var deleteTask = function() {
       }
 
   }
-
-  // fb.once('value', function(snapshot) {
-  //   snapshot.forEach(function(dataSnap) {
-  //     var item = dataSnap.child('item').item;
-  //     console.log(item);
-  //   });
-  // });
-
-
-  //Remove the parent list item from the ul
-
-    //.key()
-    
-    //console.log(child.key());
-   // child.remove();
   });
 
 
@@ -208,6 +265,9 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
 
   //bind login button to signIn
   loginButton.onclick = signIn;
+
+  //bind create account button to createUserAcc
+  createAccountButton.onclick = createUserAcc
 }
 
 var ajaxRequest = function() {
