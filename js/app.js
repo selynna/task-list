@@ -235,48 +235,100 @@ var deleteTask = function() {
  
   //delete from firebase
   fb.once('value', function(snapshot) {
+    debugger
     //gets children, which is all of the data in the firebase
     //Object {key: fjdlkjga, key: fjalkega, etc}
     var children = snapshot.val();
     console.log(children);
-
+    // => Object {user: Object } 
+      // => users: object
+        //=> simplelogin:#: Object
+          // => -Jt (key thing) : Object
+            //==> item: "task-name"
 
     //loop to go through all the children/all the keys
-    for (var user in children) {
-
+    for (var user_id in children) {
+      debugger
       //returns a string form of the key
-      var user = fb.child(user);
+      var user = fb.child(user_id);
       console.log(user);
 
-      //returns a firebase url to key: test-1-sely.firebaseio.com/KEY_VALUE
+      //returns a firebase url to key: test-1-sely.firebaseio.com/users
       var userPath = user.toString();
       console.log(userPath);
 
       //creates a new firebase database thing at the url above
       var userPathString = new Firebase(userPath);
 
-      //gets the user object (not the string version)
-      var userRef = children[user];
+      //gets the key object (not the string version)
+      var userRef = children[user_id];
       console.log(userRef);
 
-      for (var child_id in user) {
-        var child = fb.child()
+//****************************************************
+
+      userPathString.once('value', function(snapshot) {
+
+        var childrenOfChildren = snapshot.val();
+        console.log(childrenOfChildren);
+
+        for (logon_id in childrenOfChildren) {
+          debugger
+          //returns the logon of the user?
+          var loginChild = userPathString.child(logon_id);
+          console.log(loginChild);
+
+          //return firebase url to key: test-1-sely.firebaseio.com/users/KEY_VALUE
+          var loginPath = loginChild.toString();
+          console.log(loginPath);
+
+          var loginPathString = new Firebase(loginPath);
+
+          var logonRef = userRef[logon_id];
+          console.log(logonRef);
+
+//******************************************************
+  
+          loginPathString.once('value', function(snapshot) {
+            var userChildren = snapshot.val();
+            console.log(userChildren);
+
+            for (child_id in userChildren) {
+              debugger
+              var child = loginPathString.child(child_id);
+              console.log(child);
+
+              var childPath = child.toString();
+              console.log(childPath);
+
+              var childPathString = new Firebase(childPath);
+
+              var childRef = logonRef[child_id];
+              console.log(childRef);
+
+
+              //gets the value of the item in the key {key -> item: "value"}
+              var item = childRef["item"];
+              console.log(item);
+
+              //compare it with the label of the actual task
+              if (listItem.getElementsByTagName("label")[0].innerHTML == item) {
+                debugger
+                //removes the thing from firebase
+                console.log(childPathString);
+                childPathString.remove();
+                //removes task from the html
+                console.log(listItem);
+                ul.removeChild(listItem);
+                break;
+              }
+            }
+
+          })
+
+
       }
-
-      //gets the value of the item in the key {key -> item: "value"}
-      var child = userRef["item"];
-      console.log(item);
-
-      //compare it with the label of the actual task
-      if (listItem.getElementsByTagName("label")[0].innerHTML == item) {
-        //removes the thing from firebase
-        childPathString.remove();
-        //removes task from the html
-        ul.removeChild(listItem);
-        break;
-      }
-
-  }
+    })
+    }
   });
 
 
