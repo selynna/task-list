@@ -17,18 +17,18 @@ var userAuth;
 
 //New Task List Item
 var createNewTaskElement = function(taskString) {
-//Create List Item
-var listItem = document.createElement("li");
-//input (checkbox)
-var checkBox = document.createElement("input"); // checkbox
-//label
-var label = document.createElement("label");
-//input (text)
-var editInput = document.createElement("input"); // text
-//button.edit
-var editButton = document.createElement("button");
-//button.delete
-var deleteButton = document.createElement("button");
+  //Create List Item
+  var listItem = document.createElement("li");
+  //input (checkbox)
+  var checkBox = document.createElement("input"); // checkbox
+  //label
+  var label = document.createElement("label");
+  //input (text)
+  var editInput = document.createElement("input"); // text
+  //button.edit
+  var editButton = document.createElement("button");
+  //button.delete
+  var deleteButton = document.createElement("button");
 
 //todo SEPARATE FIREBASE FOR EACH USER?
 //test-1-sely.firebase.io/'uid'/keyvalues/item/?
@@ -105,56 +105,37 @@ var signIn = function() {
 //Add a new task
 var addTask = function() {
   console.log("Add task...");
-  //Create a new list item with the text from #new-task:
   var listItem = createNewTaskElement(taskInput.value);
 
-  //Append listItem to incompleteTasksHolder
-  incompleteTasksHolder.appendChild(listItem);
-  bindTaskEvents(listItem, taskCompleted);
-
-  //push task to firebase
-  //taskInput.value = "";
-  // debugger
-  // var callback = function(something) {
-  //   debugger
-  // }
-  // var asdf = 
-  //TODO
-  //goal is to push data to the server in the format:
-    //root of the tree
-    //folder for each user id
-      //key for each of the user tasks
-        //item with a value which is the task label 
-  //fb.push({uid: {item: taskInput.value}});
-  //pushes item to the firebase with the taskInput.value which equals
-  //the task label
-
+  var taskLabel = document.getElementById("new-task").value;
   var usersRef = fb.child("users");
   var userRef = usersRef.child(userAuth.uid);
-  // console.log(usersRef);
-  // function escapeEmailAddress(email) {
-  //   if (!email) return false;
-  //   return email;
-  // }
-  // var userRef = new Firebase('https://test-1-sely.firebaseio.com/users');
-  // var myUser = userRef.child(escapeEmailAddress(username));
-  // myUser.set({ 
-  //   email: username, 
-  //   item: taskInput.value
-  // }); 
 
-  // usersRef.push().set({
-  //   username:  {
-  //     item: taskInput.value
-  //   }
-  // })
-
-userRef.push({'item': taskInput.value});
-  //fb.push({item: taskInput.value});
+  userRef.on("value", function(snapshot) {
+    console.log(snapshot.val());
+    var objects = snapshot.val();
+    for (var key in objects) {
+      var listOfKeys = objects[key];
+      console.log(listOfKeys);
+      for (var tasks in listOfKeys) {
+        var listOfTasks = listOfKeys[tasks];
+        console.log(listOfTasks);
+      }
+    }  
+  }, function(errorObject) {
+    console.log("The read failed: " + errorObject.code);
   
+  });
+
+  incompleteTasksHolder.appendChild(listItem);
+  userRef.push({item: taskLabel});
+  //fb.push({item: taskInput.value});
+
 
   listItem = '';
 }
+
+
 
 //Edit an existing task
 var editTask = function() {
@@ -373,7 +354,9 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
   loginButton.onclick = signIn;
 
   //bind create account button to createUserAcc
-  createAccountButton.onclick = createUserAcc
+  createAccountButton.onclick = createUserAcc;
+
+  
 }
 
 var ajaxRequest = function() {
@@ -381,7 +364,15 @@ var ajaxRequest = function() {
 }
 
 //Set the click handler to the addTask function
+//addButton.addEventListener("click", addTask);
 addButton.addEventListener("click", addTask);
+
+// fb.on('child_added', function(snapshot) {
+//     updateTask(snapshot.val());
+//   }, function(errorObject) {
+//     console.log("error something or the other");
+  
+//   });
 addButton.addEventListener("click", ajaxRequest);
 
 //cycle over incompleteTasksHolder ul list items
@@ -395,36 +386,4 @@ for(var i = 0; i < completedTasksHolder.children.length; i++) {
   //bind events to list item's children (taskIncomplete)
   bindTaskEvents(completedTasksHolder.children[i], taskIncomplete);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
