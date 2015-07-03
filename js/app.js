@@ -13,6 +13,7 @@ var username = document.getElementById("input-email"); //input-email
 var password = document.getElementById("input-password"); //input-password
 var loginButton = document.getElementById("sign-in-button"); //sign in button
 var createAccountButton = document.getElementsByTagName("button")[2]; //3rd button
+var userAuth;
 
 //New Task List Item
 var createNewTaskElement = function(taskString) {
@@ -38,6 +39,8 @@ var deleteButton = document.createElement("button");
 //tasks loads once it gets added? then separate by uid
   
   //Each element needs modifying
+
+  //https://www.firebase.com/docs/web/guide/saving-data.html
   
   checkBox.type = "checkbox";
   editInput.type = "text";
@@ -92,7 +95,7 @@ var signIn = function() {
     $('.login-screen').hide();
     $('.container').show();
     $('.error-message').hide();
-
+    userAuth = authData;
   }
 });
 
@@ -125,7 +128,29 @@ var addTask = function() {
   //fb.push({uid: {item: taskInput.value}});
   //pushes item to the firebase with the taskInput.value which equals
   //the task label
-  fb.push({item: taskInput.value});
+
+  var usersRef = fb.child("users");
+  var userRef = usersRef.child(userAuth.uid);
+  // console.log(usersRef);
+  // function escapeEmailAddress(email) {
+  //   if (!email) return false;
+  //   return email;
+  // }
+  // var userRef = new Firebase('https://test-1-sely.firebaseio.com/users');
+  // var myUser = userRef.child(escapeEmailAddress(username));
+  // myUser.set({ 
+  //   email: username, 
+  //   item: taskInput.value
+  // }); 
+
+  // usersRef.push().set({
+  //   username:  {
+  //     item: taskInput.value
+  //   }
+  // })
+
+userRef.push({'item': taskInput.value});
+  //fb.push({item: taskInput.value});
   
 
   listItem = '';
@@ -217,24 +242,29 @@ var deleteTask = function() {
 
 
     //loop to go through all the children/all the keys
-    for (var child_id in children) {
+    for (var user in children) {
 
       //returns a string form of the key
-      var child = fb.child(child_id);
-      console.log(child);
+      var user = fb.child(user);
+      console.log(user);
 
       //returns a firebase url to key: test-1-sely.firebaseio.com/KEY_VALUE
-      var childPath = child.toString();
+      var userPath = user.toString();
+      console.log(userPath);
 
       //creates a new firebase database thing at the url above
-      var childPathString = new Firebase(childPath);
+      var userPathString = new Firebase(userPath);
 
-      //gets the key object (not the string version)
-      var childRef = children[child_id];
-      console.log(childRef);
+      //gets the user object (not the string version)
+      var userRef = children[user];
+      console.log(userRef);
+
+      for (var child_id in user) {
+        var child = fb.child()
+      }
 
       //gets the value of the item in the key {key -> item: "value"}
-      var item = childRef["item"];
+      var child = userRef["item"];
       console.log(item);
 
       //compare it with the label of the actual task
