@@ -29,6 +29,13 @@ var editButton = document.createElement("button");
 //button.delete
 var deleteButton = document.createElement("button");
 
+//todo SEPARATE FIREBASE FOR EACH USER?
+//test-1-sely.firebase.io/'uid'/keyvalues/item/?
+
+//max's exmaple for firebase saving
+//https://github.com/MaxWofford/chirp/blob/master/main.js
+//before working on separating for uid, work on making sure each saves
+//tasks loads once it gets added? then separate by uid
   
   //Each element needs modifying
   
@@ -60,10 +67,12 @@ var createUserAcc = function() {
   }, function(error, userData) {
     if (error) {
       console.log("Error creating user:", error);
+      $('.successful-account-message').hide();
       $('.error-create-account').show();
 
     } else {
       console.log("Successfully created user account with uid:", userData.uid);
+      $('.error-create-account').hide();
       $('.successful-account-message').show();
     }
   });
@@ -107,6 +116,15 @@ var addTask = function() {
   //   debugger
   // }
   // var asdf = 
+  //TODO
+  //goal is to push data to the server in the format:
+    //root of the tree
+    //folder for each user id
+      //key for each of the user tasks
+        //item with a value which is the task label 
+  //fb.push({uid: {item: taskInput.value}});
+  //pushes item to the firebase with the taskInput.value which equals
+  //the task label
   fb.push({item: taskInput.value});
   
 
